@@ -7,30 +7,54 @@ import {
   Text,
   View,
   TouchableOpacity,
+  NativeSyntheticEvent,
+  TextInputChangeEventData,
+  ScrollView,
+  Keyboard,
 } from "react-native"
-import React from "react"
+import React, { useState } from "react"
+import { useDispatch, useSelector } from "react-redux"
+import { RootState } from "../store/store"
+import { add } from "../store/todos"
 
 const Todos = () => {
+  const [input, setInput] = useState("")
+
+  const todos = useSelector((state: RootState) => state.todos.todos)
+  const dispatch = useDispatch()
+
+  const handleSubmit = () => {
+    dispatch(add(input))
+    setInput("")
+    Keyboard.dismiss()
+  }
+
   return (
     <View style={styles.container}>
       <View style={styles.taskWrapper}>
-        <Text style={styles.sectionTitle}>Today's task</Text>
+        <Text style={styles.sectionTitle}>Today's tasks</Text>
         {/* Tasks display */}
-        <View style={styles.items}>
-          <Task>Hello</Task>
-          <Task>Do something</Task>
-          <Task>Today</Task>
-          <Task>Great</Task>
-        </View>
+        <ScrollView style={styles.scrollWrapper}>
+          <View style={styles.items}>
+            {todos.map((task, index) => (
+              <Task key={index}>{task}</Task>
+            ))}
+          </View>
+        </ScrollView>
       </View>
 
       {/* Task input */}
       <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : "padding"}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={styles.writeTasksWrapper}
       >
-        <TextInput style={styles.input} placeholder={"Write a task"} />
-        <TouchableOpacity>
+        <TextInput
+          value={input}
+          onChangeText={setInput}
+          style={styles.input}
+          placeholder={"Write a task"}
+        />
+        <TouchableOpacity onPress={handleSubmit}>
           <View style={styles.addWrapper}>
             <View style={styles.addText}>
               <Text>+</Text>
@@ -50,10 +74,14 @@ const styles = StyleSheet.create({
   taskWrapper: {
     paddingTop: 80,
     paddingHorizontal: 20,
+    paddingBottom: 170,
   },
   sectionTitle: {
     fontSize: 24,
     fontWeight: "bold",
+  },
+  scrollWrapper: {
+    paddingHorizontal: 20,
   },
   items: {
     marginTop: 20,
