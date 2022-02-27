@@ -1,15 +1,26 @@
 import React from "react"
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native"
+import { useDispatch } from "react-redux"
+import { remove } from "../store/todos"
 
 type Props = {
   children: string
+  index: number
 }
 
-const Task = ({ children }: Props) => {
+const Task = ({ children, index }: Props) => {
+  const dispatch = useDispatch()
+
+  const handleComplete = () => {
+    dispatch(remove(index))
+  }
+
   return (
     <View style={styles.item}>
       <View style={styles.itemLeft}>
-        <View style={styles.square}></View>
+        <TouchableOpacity onPress={handleComplete}>
+          <View style={styles.square} />
+        </TouchableOpacity>
         <Text style={styles.itemText}>{children}</Text>
       </View>
     </View>

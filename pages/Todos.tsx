@@ -37,7 +37,9 @@ const Todos = () => {
         <ScrollView style={styles.scrollWrapper}>
           <View style={styles.items}>
             {todos.map((task, index) => (
-              <Task key={index}>{task}</Task>
+              <Task key={index} index={index}>
+                {task}
+              </Task>
             ))}
           </View>
         </ScrollView>
